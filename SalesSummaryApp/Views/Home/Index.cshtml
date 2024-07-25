@@ -1,0 +1,124 @@
+﻿@* Views/Home/Index.cshtml *@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Sales Summary</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+    <div style="width: 75%;">
+        <canvas id="myChart1"></canvas>
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            $.ajax({
+                url: "/home/salessummary",
+                processData: false,
+                contentType: false,
+                type: 'POST',
+                success: function (r) {
+                    if (r.status == "OK") {
+                        var ctx = document.getElementById("myChart1").getContext("2d");
+                        var myChart = new Chart(ctx, {
+                            type: 'line',
+                            data: {
+                                labels: [],
+                                datasets: [
+                                    {
+                                        label: "Revenue By Item Group",
+                                        fill: false,
+                                        lineTension: 0.1,
+                                        backgroundColor: "rgba(75,192,192,0.4)",
+                                        borderColor: "rgba(75,192,192,1)",
+                                        borderCapStyle: 'butt',
+                                        borderDash: [],
+                                        borderDashOffset: 0.0,
+                                        borderJoinStyle: 'miter',
+                                        pointBorderColor: "rgba(75,192,192,1)",
+                                        pointBackgroundColor: "#fff",
+                                        pointBorderWidth: 1,
+                                        pointHoverRadius: 5,
+                                        pointHoverBackgroundColor: "rgba(75,192,192,1)",
+                                        pointHoverBorderColor: "rgba(220,220,220,1)",
+                                        pointHoverBorderWidth: 2,
+                                        pointRadius: 1,
+                                        pointHitRadius: 10,
+                                        data: [],
+                                        spanGaps: false,
+                                    }
+                                ]
+                            },
+                            options: {
+                                tooltips: {
+                                    mode: 'index',
+                                    intersect: false
+                                }
+                            }
+                        });
+
+                        var labels = [];
+                        var val = [];
+                        $.each(r.items, function (i, a) {
+                            labels.push(a.item);
+                            val.push(a.revenue);
+                        });
+
+                        myChart.data.labels = labels;
+                        myChart.data.datasets[0].data = val;
+                        myChart.update();
+                    } else {
+                        alert(`Error`);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error(xhr, status, error); // Log error ke konsol
+                }
+            });
+        });
+
+        $(document).ready(function () {
+            var ctx = document.getElementById("myChart1").getContext("2d");
+            var myChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ["Item 1", "Item 2", "Item 3"],
+                    datasets: [
+                        {
+                            label: "Revenue By Item Group",
+                            fill: false,
+                            lineTension: 0.1,
+                            backgroundColor: "rgba(75,192,192,0.4)",
+                            borderColor: "rgba(75,192,192,1)",
+                            borderCapStyle: 'butt',
+                            borderDash: [],
+                            borderDashOffset: 0.0,
+                            borderJoinStyle: 'miter',
+                            pointBorderColor: "rgba(75,192,192,1)",
+                            pointBackgroundColor: "#fff",
+                            pointBorderWidth: 1,
+                            pointHoverRadius: 5,
+                            pointHoverBackgroundColor: "rgba(75,192,192,1)",
+                            pointHoverBorderColor: "rgba(220,220,220,1)",
+                            pointHoverBorderWidth: 2,
+                            pointRadius: 1,
+                            pointHitRadius: 10,
+                            data: [100, 200, 300],
+                            spanGaps: false,
+                        }
+                    ]
+                },
+                options: {
+                    tooltips: {
+                        mode: 'index',
+                        intersect: false
+                    }
+                }
+            });
+        });
+
+
+    </script>
+</body>
+</html>
